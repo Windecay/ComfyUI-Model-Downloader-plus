@@ -29,7 +29,9 @@ def is_trusted_url(url):
     trusted_domains = [
         'huggingface.co',
         'hf-mirror.com',
-        'modelscope.cn'
+        'modelscope.cn',
+        'github.com',
+        'githubusercontent.com'
     ]
 
     try:
@@ -60,7 +62,7 @@ def download_file_with_temp(url, file_path, overwrite=False, max_retries=3, retr
     """下载单个文件到指定路径，使用临时文件（共享函数），支持重试和字节数验证"""
     try:
         if not is_trusted_url(url):
-            error_msg = f"URL验证失败: {url} 不在可信站点范围内（目前支持的可信模型站点huggingface.co、hf-mirror.com、modelscope.cn）"
+            error_msg = f"URL验证失败: {url} 不在可信站点范围内（目前支持的可信模型站点huggingface.co、hf-mirror.com、modelscope.cn、github.com、githubusercontent.com）"
             print(error_msg)
             return False, error_msg
 
@@ -226,6 +228,7 @@ def attempt_download(url, file_path, overwrite=False, max_retries=3, retry_delay
 
     return False, f"下载失败: 达到最大重试次数 ({max_retries})"
 
+
 class SimpleBatchDownloader:
     """批量下载模型节点，可以同时下载多个URL"""
     NAME = "SimpleBatchDownloader"
@@ -278,15 +281,15 @@ class SimpleBatchDownloader:
                     os.makedirs(model_dir, exist_ok=True)
 
                     file_path = os.path.join(model_dir, file_name)
-                
+
                     success, message = download_file_with_temp(url, file_path, overwrite_existing)
                     results.append(message)
-                    
+
                 except Exception as e:
                     results.append(f"处理URL {url} 时出错: {str(e)}")
 
         final_message = "\n".join(results)
-        
+
         return (anything, final_message)
 
 class SimpleModelDownloader:
@@ -321,7 +324,7 @@ class SimpleModelDownloader:
         """下载模型并返回带后缀的模型名称"""
         if not model_url.strip():
             return ("", "没有提供有效的URL")
-
+        
         try:
             model_name_with_ext = model_url.split('/')[-1].split('?')[0]
         except Exception as e:

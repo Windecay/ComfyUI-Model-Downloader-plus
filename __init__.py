@@ -6,6 +6,8 @@ from .nodes.model_downloader import (
     DownloadControlNet
 )
 from .nodes.simple_batch_downloader import (SimpleBatchDownloader,SimpleModelDownloader)
+from .nodes.general_model_downloader import GeneralModelDownloader
+                                            
 
 NODE_CLASS_MAPPINGS = {
     "DownloadCheckpoint": DownloadCheckpoint,
@@ -14,7 +16,8 @@ NODE_CLASS_MAPPINGS = {
     "DownloadUNET": DownloadUNET,
     "DownloadControlNet": DownloadControlNet,
     "SimpleBatchDownloader": SimpleBatchDownloader,
-    "SimpleModelDownloader": SimpleModelDownloader
+    "SimpleModelDownloader": SimpleModelDownloader,
+    "GeneralModelDownloader": GeneralModelDownloader
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -24,7 +27,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "DownloadUNET": "(Down)load UNET",
     "DownloadControlNet": "(Down)load ControlNet",
     "SimpleBatchDownloader": "Simple Batch Downloader",
-    "SimpleModelDownloader": "Simple Model Downloader"
+    "SimpleModelDownloader": "Simple Model Downloader",
+    "GeneralModelDownloader": "General Model Downloader"
 }
 
 WEB_DIRECTORY = "./web"
