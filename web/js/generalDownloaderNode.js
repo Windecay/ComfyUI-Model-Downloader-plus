@@ -162,6 +162,22 @@ function formatPercent(value) {
     return `${Math.round(percent)}%`;
 }
 
+function formatBytes(value) {
+    const bytes = Number(value);
+    if (!Number.isFinite(bytes) || bytes < 0) return "";
+
+    const units = ["B", "KB", "MB", "GB", "TB"];
+    let size = bytes;
+    for (const unit of units) {
+        if (size < 1024 || unit === units[units.length - 1]) {
+            if (unit === "B") return `${Math.round(size)} ${unit}`;
+            return `${size.toFixed(1)} ${unit}`;
+        }
+        size /= 1024;
+    }
+    return `${size.toFixed(1)} TB`;
+}
+
 function normalizeModelEntry(entry, defaults, index) {
     if (typeof entry === "string") {
         entry = { url: entry };
@@ -1132,14 +1148,20 @@ class GeneralDownloaderPanel {
         const meta = document.createElement("div");
         meta.className = "gmd-meta";
         const fileText = model.file_name ? ` | ${model.file_name}` : "";
+        const expectedSizeText = model.expected_size !== null && model.expected_size !== undefined
+            ? ` | size: ${formatBytes(model.expected_size)}`
+            : "";
         const checks = [];
         if (model.expected_size !== null && model.expected_size !== undefined) checks.push("size");
         if (model.sha256) checks.push("sha256");
         if (model.sha1) checks.push("sha1");
         if (model.md5) checks.push("md5");
         const checkText = checks.length ? ` | verify: ${checks.join("+")}` : "";
-        meta.textContent = `${model.download_directory}${fileText} | ${model.urls.length} URL${model.urls.length === 1 ? "" : "s"}${checkText}`;
-        meta.title = model.urls.join("\n");
+        meta.textContent = `${model.download_directory}${fileText}${expectedSizeText} | ${model.urls.length} URL${model.urls.length === 1 ? "" : "s"}${checkText}`;
+        meta.title = [
+            model.expected_size !== null && model.expected_size !== undefined ? `Expected size: ${model.expected_size} bytes` : "",
+            ...model.urls,
+        ].filter(Boolean).join("\n");
         body.appendChild(meta);
 
         const statusLine = document.createElement("div");
